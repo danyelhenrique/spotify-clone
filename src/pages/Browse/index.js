@@ -8,13 +8,18 @@ import { Creators as PlaylistsActions } from '../../store/ducks/playlists';
 
 import { Container, Title, List, Playlist } from './styles';
 
+import Loading from '../../components/Loading';
+
 function Browse({ getPlaylistsRequest, playlists }) {
     useEffect(() => {
         getPlaylistsRequest();
     }, [getPlaylistsRequest]);
     return (
         <Container>
-            <Title>Navegar</Title>
+            <Title>
+                Navegar
+                {playlists.loading && <Loading />}
+            </Title>
             <List>
                 {playlists.data.map(playlist => (
                     <Playlist
@@ -52,5 +57,6 @@ Browse.propTypes = {
                 description: PropTypes.string,
             })
         ),
+        loading: PropTypes.bool,
     }).isRequired,
 };
