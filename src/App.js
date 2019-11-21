@@ -1,22 +1,33 @@
 import React from 'react';
 
+import { BrowserRouter } from 'react-router-dom';
+
 import GlobalStyles from './styles/global';
 
+import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Player from './components/Player';
 
-import { Wrapper, Container } from './styles/app.styles';
+import Routes from './routes';
+
+import { Wrapper, Container, Content } from './styles/app.styles';
 
 function App() {
     return (
         <div className="App">
-            <Wrapper>
-                <GlobalStyles />
-                <Container>
-                    <Sidebar />
-                </Container>
-                <Player />
-            </Wrapper>
+            <BrowserRouter>
+                <Wrapper>
+                    <GlobalStyles />
+                    <Container>
+                        <Sidebar />
+                        <Content>
+                            <Header />
+                            <Routes />
+                        </Content>
+                    </Container>
+                    <Player />
+                </Wrapper>
+            </BrowserRouter>
         </div>
     );
 }
