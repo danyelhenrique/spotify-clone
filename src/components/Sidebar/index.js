@@ -1,15 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
+import PropTypes from 'prop-types';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Creators as PlaylistsActions } from '../../store/ducks/playlists';
 
 import { Container, NewPlaylist, Nav } from './styles';
 import AddPlaylistIcon from '../../assets/images/add_playlist.svg';
 
-export default function Sidebar() {
+function Sidebar({ getPlaylistsRequest, playlists }) {
+    useEffect(() => {
+        getPlaylistsRequest();
+    }, [getPlaylistsRequest]);
     return (
         <Container>
             <div>
                 <Nav main>
                     <li>
-                        <a href="#/">Navegar</a>
+                        <Link to="/">Navegar</Link>
                     </li>
                     <li>
                         <a href="#/">Radio</a>
@@ -53,9 +63,13 @@ export default function Sidebar() {
                     <li>
                         <span>PLAYLISTS</span>
                     </li>
-                    <li>
-                        <a href="#/">Melhores do rock</a>
-                    </li>
+                    {playlists.data.map(playlist => (
+                        <li key={playlist.id}>
+                            <Link to={`playlists/${playlist.id}`}>
+                                {playlist.title}
+                            </Link>
+                        </li>
+                    ))}
                 </Nav>
             </div>
 
@@ -66,3 +80,24 @@ export default function Sidebar() {
         </Container>
     );
 }
+
+const mapStateToProps = state => ({
+    playlists: state.playlists,
+});
+
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(PlaylistsActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
+
+Sidebar.propTypes = {
+    getPlaylistsRequest: PropTypes.func.isRequired,
+    playlists: PropTypes.shape({
+        data: PropTypes.arrayOf(
+            PropTypes.shape({
+                id: PropTypes.number,
+                title: PropTypes.string,
+            })
+        ),
+    }).isRequired,
+};
