@@ -69,7 +69,9 @@ function Playlist({ playlistDetails, getPlaylistDetailsRequest, ...props }) {
                                 <SongItem
                                     key={song.id}
                                     onClick={() => setSelectedSong(song.id)}
-                                    onDoubleClick={() => loadSong(song)}
+                                    onDoubleClick={() =>
+                                        loadSong(song, playlistDetails.data.songs)
+                                    }
                                     selected={selectedSong === song.id}
                                     playing={
                                         currentSong &&
