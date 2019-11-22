@@ -1,4 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
+import { connect } from 'react-redux';
+
+import Sound from 'react-sound';
 
 import Silider from 'rc-slider';
 
@@ -28,16 +33,29 @@ import ForwardIcon from '../../assets/images/forward.svg';
 
 import RepeatIcon from '../../assets/images/repeat.svg';
 
-export default function Player() {
+function Player({ player }) {
     return (
         <Container>
+            {!!player.currentSong && (
+                <Sound
+                    url={player.currentSong.file}
+                    playStatus={player.status}
+                />
+            )}
             <Current>
-                <img src={Cover} alt="Cover" />
+                {!!player.currentSong && (
+                    <>
+                        <img
+                            src={player.currentSong.thumbnail}
+                            alt={player.currentSong.title}
+                        />
 
-                <div>
-                    <span>Time like these</span>
-                    <small>THE WEEKND</small>
-                </div>
+                        <div>
+                            <span>{player.currentSong.title}</span>
+                            <small>{player.currentSong.author}</small>
+                        </div>
+                    </>
+                )}
             </Current>
 
             <Progress>
@@ -98,3 +116,20 @@ export default function Player() {
         </Container>
     );
 }
+const mapStateToProps = state => ({
+    player: state.player,
+});
+
+export default connect(mapStateToProps)(Player);
+
+Player.propTypes = {
+    player: PropTypes.shape({
+        currentSong: PropTypes.shape({
+            thumbnail: PropTypes.string,
+            title: PropTypes.string,
+            author: PropTypes.string,
+            file: PropTypes.string,
+        }),
+        status: PropTypes.string,
+    }).isRequired,
+};

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import PropTypes from 'prop-types';
 
@@ -11,10 +11,15 @@ import PlusIcon from '../../assets/images/plus.svg';
 import Loading from '../../components/Loading';
 
 import { Creators as PlaylistDetailsActions } from '../../store/ducks/playlistDetails';
+import { Creators as PlayerActions } from '../../store/ducks/player';
 
-import { Container, Header, SongList } from './styles';
+import { Container, Header, SongList, SongItem } from './styles';
 
-function Playlist({ playlistDetails, getPlaylistDetailsRequest, match }) {
+function Playlist({ playlistDetails, getPlaylistDetailsRequest, ...props }) {
+    const { match, loadSong, currentSong } = props;
+
+    const [selectedSong, setSelectedSong] = useState(null);
+
     function loadPlaylistDetails() {
         const { id } = match.params;
         getPlaylistDetailsRequest(id);
@@ -61,7 +66,16 @@ function Playlist({ playlistDetails, getPlaylistDetailsRequest, match }) {
                             </tr>
                         ) : (
                             playlistDetails.data.songs.map(song => (
-                                <tr key={song.id}>
+                                <SongItem
+                                    key={song.id}
+                                    onClick={() => setSelectedSong(song.id)}
+                                    onDoubleClick={() => loadSong(song)}
+                                    selected={selectedSong === song.id}
+                                    playing={
+                                        currentSong &&
+                                        currentSong.id === song.id
+                                    }
+                                >
                                     <td>
                                         <img src={PlusIcon} alt="Adicionar" />
                                     </td>
@@ -69,7 +83,7 @@ function Playlist({ playlistDetails, getPlaylistDetailsRequest, match }) {
                                     <td>{song.author}</td>
                                     <td>{song.album}</td>
                                     <td>3:26</td>
-                                </tr>
+                                </SongItem>
                             ))
                         )}
                     </tbody>
@@ -90,10 +104,14 @@ function Playlist({ playlistDetails, getPlaylistDetailsRequest, match }) {
 
 const mapStateToProps = state => ({
     playlistDetails: state.playlistDetails,
+    currentSong: state.player.currentSong,
 });
 
 const mapDispatchToProps = dispatch =>
-    bindActionCreators(PlaylistDetailsActions, dispatch);
+    bindActionCreators(
+        { ...PlaylistDetailsActions, ...PlayerActions },
+        dispatch
+    );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Playlist);
 
@@ -119,5 +137,9 @@ Playlist.propTypes = {
             ),
         }),
         loading: PropTypes.bool,
+    }).isRequired,
+    loadSong: PropTypes.func.isRequired,
+    currentSong: PropTypes.shape({
+        id: PropTypes.string,
     }).isRequired,
 };
