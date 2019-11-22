@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 
+import { Creators as PlayerActions  } from '../../store/ducks/player';
+
+import {bindActionCreators} from 'redux';
+
 import Sound from 'react-sound';
 
 import Silider from 'rc-slider';
@@ -17,7 +21,7 @@ import {
     ProgessSlider,
 } from './styles';
 
-import Cover from '../../assets/images/cover.jpeg';
+
 
 import VolumeIcon from '../../assets/images/volume.svg';
 
@@ -27,13 +31,13 @@ import BackwardIcon from '../../assets/images/backward.svg';
 
 import PlayIcon from '../../assets/images/play.svg';
 
-// import PauseIcon from '../../assets/images/pause.svg';
+import PauseIcon from '../../assets/images/pause.svg';
 
 import ForwardIcon from '../../assets/images/forward.svg';
 
 import RepeatIcon from '../../assets/images/repeat.svg';
 
-function Player({ player }) {
+function Player({ player, play, pause }) {
     return (
         <Container>
             {!!player.currentSong && (
@@ -68,9 +72,17 @@ function Player({ player }) {
                         <img src={BackwardIcon} alt="BackwardIcon" />
                     </button>
 
-                    <button type="button">
-                        <img src={PlayIcon} alt="PlayIcon" />
-                    </button>
+                    {!!player.currentSong && player.status === Sound.status.PLAYING ? (
+                        <button type="button" onClick={pause}>
+                            <img src={PauseIcon} alt="PlayIcon" />
+                        </button>
+
+                    ):(
+                        <button type="button" onClick={play}>
+                             <img src={PlayIcon} alt="PlayIcon" />
+                        </button>
+                    )}
+
 
                     <button type="button">
                         <img src={ForwardIcon} alt="ForwardIcon" />
@@ -120,7 +132,10 @@ const mapStateToProps = state => ({
     player: state.player,
 });
 
-export default connect(mapStateToProps)(Player);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(PlayerActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Player);
 
 Player.propTypes = {
     player: PropTypes.shape({
@@ -132,4 +147,6 @@ Player.propTypes = {
         }),
         status: PropTypes.string,
     }).isRequired,
+    play: PropTypes.func.isRequired,
+    pause: PropTypes.func.isRequired,
 };
