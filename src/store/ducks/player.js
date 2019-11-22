@@ -6,12 +6,15 @@ export const Types = {
     PAUSE: 'player/PAUSE',
     NEXT: 'player/NEXT',
     PREV: 'player/PREV',
+    PLAYING: 'player/PLAYING',
 };
 
 const INITIAL_STATE = {
     currentSong: null,
     list: [],
     status: Sound.status.PLAYING,
+    position: null,
+    duration: null,
 };
 
 export default function player(state = INITIAL_STATE, action) {
@@ -34,27 +37,43 @@ export default function player(state = INITIAL_STATE, action) {
                 status: Sound.status.PAUSE,
             };
         case Types.NEXT: {
-            const currentIndex = state.list.findIndex(song => song.id === state.currentSong.id);
+            const currentIndex = state.list.findIndex(
+                song => song.id === state.currentSong.id
+            );
 
-            const next = state.list[currentIndex +1];
+            const next = state.list[currentIndex + 1];
 
-            if(next) {
-                return {...state, currentSong: next,  status: Sound.status.PLAYING,}
+            if (next) {
+                return {
+                    ...state,
+                    currentSong: next,
+                    status: Sound.status.PLAYING,
+                };
             }
             return state;
-          
         }
         case Types.PREV: {
-            const currentIndex = state.list.findIndex(song => song.id === state.currentSong.id);
+            const currentIndex = state.list.findIndex(
+                song => song.id === state.currentSong.id
+            );
 
-            const prev = state.list[currentIndex -1];
+            const prev = state.list[currentIndex - 1];
 
-            if(prev) {
-                return {...state, currentSong: prev,  status: Sound.status.PLAYING,}
+            if (prev) {
+                return {
+                    ...state,
+                    currentSong: prev,
+                    status: Sound.status.PLAYING,
+                };
             }
             return state;
-    
         }
+        case Types.PLAYING:
+            return { 
+                ...state,
+                position: action.payload.position,
+                duration: action.payload.duration,
+            }
         default:
             return state;
     }
@@ -80,5 +99,10 @@ export const Creators = {
 
     prev: () => ({
         type: Types.PREV,
+    }),
+
+    playing: ({position, duration}) => ({
+        type: Types.PLAYING,
+        payload: {position, duration}
     }),
 };

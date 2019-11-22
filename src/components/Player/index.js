@@ -35,7 +35,9 @@ import ForwardIcon from '../../assets/images/forward.svg';
 
 import RepeatIcon from '../../assets/images/repeat.svg';
 
-function Player({ player, play, pause, next, prev }) {
+function Player({ player, play, pause, next, prev, ...props }) {
+    const { playing, position, duration } = props;
+
     return (
         <Container>
             {!!player.currentSong && (
@@ -43,6 +45,7 @@ function Player({ player, play, pause, next, prev }) {
                     url={player.currentSong.file}
                     playStatus={player.status}
                     onFinishedPlaying={next}
+                    onPlaying={playing}
                 />
             )}
             <Current>
@@ -96,7 +99,7 @@ function Player({ player, play, pause, next, prev }) {
                 </Controls>
 
                 <Time>
-                    <span>1: 39</span>
+                    <span>{position}</span>
                     <ProgessSlider>
                         <Silider
                             railStyle={{
@@ -107,7 +110,7 @@ function Player({ player, play, pause, next, prev }) {
                             handleStyle={{ border: 0 }}
                         />
                     </ProgessSlider>
-                    <span>4: 24</span>
+                    <span>{duration}</span>
                 </Time>
             </Progress>
 
@@ -126,8 +129,20 @@ function Player({ player, play, pause, next, prev }) {
         </Container>
     );
 }
+
+function msToTime(duration) {
+    let seconds = parseInt((duration / 1000) % 60, 10);
+    const minutes = parseInt((duration / (1000 * 60)) % 60, 10);
+
+    seconds = seconds < 10 ? `0${seconds}` : seconds;
+
+    return `${minutes}:${seconds}`;
+}
+
 const mapStateToProps = state => ({
     player: state.player,
+    position: msToTime(state.player.position),
+    duration: msToTime(state.player.duration),
 });
 
 const mapDispatchToProps = dispatch =>
@@ -149,4 +164,7 @@ Player.propTypes = {
     pause: PropTypes.func.isRequired,
     next: PropTypes.func.isRequired,
     prev: PropTypes.func.isRequired,
+    playing: PropTypes.func.isRequired,
+    position: PropTypes.string.isRequired,
+    duration: PropTypes.string.isRequired,
 };
