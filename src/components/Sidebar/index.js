@@ -68,7 +68,7 @@ function Sidebar({ getPlaylistsRequest, playlists }) {
                     </li>
                     {playlists.data.map(playlist => (
                         <li key={playlist.id}>
-                            <Link to={`playlists/${playlist.id}`}>
+                            <Link to={`/playlists/${playlist.id}`}>
                                 {playlist.title}
                             </Link>
                         </li>

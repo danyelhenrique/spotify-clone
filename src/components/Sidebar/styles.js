@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Spinner } from '../../components/Loading/styles'
+import { Spinner } from '../Loading/styles';
 
 export const Container = styled.aside`
     height: 100%;
@@ -27,7 +27,7 @@ export const Nav = styled.ul`
 
     li {
         display: flex;
-        align-items:center;
+        align-items: center;
         a {
             color: inherit;
             text-decoration: none;

@@ -9,6 +9,7 @@ import GlobalStyles from './styles/global';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Player from './components/Player';
+import ErrorBox from './components/ErrorBox';
 
 import Routes from './routes';
 import store from './store';
@@ -16,7 +17,6 @@ import store from './store';
 import { Wrapper, Container, Content } from './styles/app.styles';
 
 function App() {
-    // console.tron.log('Oi');
     return (
         <Provider store={store}>
             <BrowserRouter>
@@ -25,6 +25,7 @@ function App() {
                     <Container>
                         <Sidebar />
                         <Content>
+                            <ErrorBox />
                             <Header />
                             <Routes />
                         </Content>
