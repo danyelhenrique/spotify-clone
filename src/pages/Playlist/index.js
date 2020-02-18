@@ -20,13 +20,14 @@ function Playlist({ playlistDetails, getPlaylistDetailsRequest, ...props }) {
 
     const [selectedSong, setSelectedSong] = useState(null);
 
-    function loadPlaylistDetails() {
-        const { id } = match.params;
-        getPlaylistDetailsRequest(id);
-    }
+  
 
     useEffect(() => {
-        loadPlaylistDetails();
+    function loadPlaylistDetails() {
+            const { id } = match.params;
+            getPlaylistDetailsRequest(id);
+        }
+    loadPlaylistDetails();
     }, [match.params.id]);
 
     function renderDetails() {

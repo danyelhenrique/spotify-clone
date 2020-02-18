@@ -36,7 +36,16 @@ import ForwardIcon from '../../assets/images/forward.svg';
 import RepeatIcon from '../../assets/images/repeat.svg';
 
 function Player({ player, play, pause, next, prev, ...props }) {
-    const { playing, position, duration } = props;
+    const {
+        playing,
+        position,
+        duration,
+        handlePosition,
+        setPosition,
+        positionShow,
+        progress,
+        setVolume,
+    } = props;
 
     return (
         <Container>
@@ -46,6 +55,8 @@ function Player({ player, play, pause, next, prev, ...props }) {
                     playStatus={player.status}
                     onFinishedPlaying={next}
                     onPlaying={playing}
+                    position={player.position}
+                    volume={player.volume}
                 />
             )}
             <Current>
@@ -99,7 +110,7 @@ function Player({ player, play, pause, next, prev, ...props }) {
                 </Controls>
 
                 <Time>
-                    <span>{position}</span>
+                    <span>{positionShow || position}</span>
                     <ProgessSlider>
                         <Silider
                             railStyle={{
@@ -108,6 +119,10 @@ function Player({ player, play, pause, next, prev, ...props }) {
                             }}
                             trackStyle={{ background: '#1ed760' }}
                             handleStyle={{ border: 0 }}
+                            max={1000}
+                            onChange={value => handlePosition(value / 1000)}
+                            onAfterChange={value => setPosition(value / 1000)}
+                            value={progress}
                         />
                     </ProgessSlider>
                     <span>{duration}</span>
@@ -123,7 +138,8 @@ function Player({ player, play, pause, next, prev, ...props }) {
                     }}
                     trackStyle={{ background: '#fff' }}
                     handleStyle={{ display: 'none' }}
-                    value={100}
+                    value={player.volume}
+                    onChange={setVolume}
                 />
             </Volume>
         </Container>
@@ -131,6 +147,8 @@ function Player({ player, play, pause, next, prev, ...props }) {
 }
 
 function msToTime(duration) {
+    if (!duration) return null;
+
     let seconds = parseInt((duration / 1000) % 60, 10);
     const minutes = parseInt((duration / (1000 * 60)) % 60, 10);
 
@@ -143,6 +161,13 @@ const mapStateToProps = state => ({
     player: state.player,
     position: msToTime(state.player.position),
     duration: msToTime(state.player.duration),
+    positionShow: msToTime(state.player.positionShow),
+    progress:
+        parseInt(
+            (state.player.positionShow || state.player.position) *
+                (1000 / state.player.duration),
+            10
+        ) || 0,
 });
 
 const mapDispatchToProps = dispatch =>
@@ -157,6 +182,7 @@ Player.propTypes = {
             title: PropTypes.string,
             author: PropTypes.string,
             file: PropTypes.string,
+            position: PropTypes.number,
         }),
         status: PropTypes.string,
     }).isRequired,
@@ -167,4 +193,9 @@ Player.propTypes = {
     playing: PropTypes.func.isRequired,
     position: PropTypes.string.isRequired,
     duration: PropTypes.string.isRequired,
+    setPosition: PropTypes.func.isRequired,
+    handlePosition: PropTypes.func.isRequired,
+    positionShow: PropTypes.string.isRequired,
+    progress: PropTypes.number.isRequired,
+    setVolume: PropTypes.func.isRequired,
 };
